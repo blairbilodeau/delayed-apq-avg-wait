@@ -1,7 +1,6 @@
 ###############################################################################
 ### This computes the average waiting time for Class-1 and Class-2 customers in 
 #   an M/D/1 Delayed APQ.
-### Prepared by Blair Bilodeau on December 15, 2019
 ###############################################################################
 
 #########

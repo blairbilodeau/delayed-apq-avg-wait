@@ -1,8 +1,12 @@
 ###############################################################################
-### This computes the waiting time for Class-2 customers in 
+### This computes the waiting time for Class-1 and Class-2 customers in 
 #   an M/M/1 Delayed APQ.
-### Prepared by Blair Bilodeau on December 15, 2019
 ###############################################################################
+
+wdir <- '/Users/blairbilodeau/Documents/Research/Projects/Delayed APQ/delayed-apq/'
+
+code.path <- paste0(wdir, 'code/')
+source(paste0(code.path,"MM1_AvgWait.R"))
 
 #########
 # LST Inversion Algorithms
@@ -205,7 +209,7 @@ MM1_class2 <- function(mu, lam1, lam2, b, d, K){
 }
 
 ## Use above computation of CDF LST to get CDF explicitly for NPQ
-NP_CDF_class2 <- function(mu, lam1, lam2, N){
+NP_CDF_class2 <- function(mu, lam1, lam2, N=12){
   f <- function(x){
     GS_CDF(MM1_class2(mu, lam1, lam2, b=0, d=0, K=500)[[3]], N)(x)
   }
@@ -213,7 +217,7 @@ NP_CDF_class2 <- function(mu, lam1, lam2, N){
 }
 
 ## Use above computation of CDF LST to get CDF explicitly for Delayed APQ
-DP_CDF_class2 <- function(mu, lam1, lam2, b, d, K, N){
+DP_CDF_class2 <- function(mu, lam1, lam2, b, d, K=500, N=12){
   DP_d <- function(x){
     GS_CDF(MM1_class2(mu, lam1, lam2, b, d, K)[[1]], N)(x)
   }
@@ -231,3 +235,118 @@ DP_CDF_class2 <- function(mu, lam1, lam2, b, d, K, N){
   Vectorize(f)
 }
 
+#########################
+# computing LSTs for NPQ
+#########################
+
+tildeEnpq <- function(lam1){
+  temp <- function(s){(1 + s + lam1 - sqrt((1+s+lam1)^2 - 4*lam1))/(2*lam1)}
+  Vectorize(temp)
+}
+
+tildeW1npq <- function(lam1, lam2){
+  lam <- lam1+lam2
+  temp <- function(s) {(1 - lam1 + (1-lam)*s) / (1 - lam1 + s)}
+  Vectorize(temp)
+}
+
+tildeW2npq <- function(lam1, lam2){
+  lam <- lam1 + lam2
+  tildeEnpqs <- tildeEnpq(lam1)
+  temp <- function(s) {(1-lam)*(s+lam1*(1-tildeEnpqs(s))) / (s + lam2*(s+lam1*(1-tildeEnpqs(s)))/(1+s+lam1*(1-tildeEnpqs(s))))}
+  Vectorize(temp)
+}
+
+#########################
+# computing LSTs for APQ
+#########################
+
+# LST of accreditation interval under exponential service
+tildeG <- function(b, lam1){
+  lam1A = lam1*(1-b)
+  temp <- function(s) {(1 + s + lam1A - sqrt((1+s+lam1A)^2 - 4*lam1A))/(2*lam1A)}
+  Vectorize(temp)
+}
+
+tildeG0 <- function(b, lam1, lam2){
+  tildeGs <- tildeG(b,lam1)
+  temp <- function(s) {tildeGs(s + (lam2+lam1*b)*(1-tildeGs(s)))}
+  Vectorize(temp)
+}
+
+###################
+# Class-2 LST
+###################
+
+tildeV2 <- function(b, lam1, lam2){
+  lam1A <- lam1*(1-b)
+  tildeGs <- tildeG(b, lam1)
+  temp <- function(s){((1-lam1A) - lam2 - lam1*b) * (1 - tildeGs(b*s)) /  (b*s - (lam2 + lam1*b)*(1-tildeGs(b*s)))}
+  Vectorize(temp)
+}
+
+tildeW2 <- function(b, lam1, lam2){
+  rho <- lam1+lam2
+  tildeV2s <- tildeV2(b, lam1, lam2)
+  temp <- function(s){1-rho + rho*tildeV2s(s/b)}
+}
+
+tildeV <- function(b, lam1, lam2){
+  lam <- lam1 + lam2
+  lam1A <- lam1*(1-b)
+  tildeGs <- tildeG(b, lam1)
+  temp <- function(s){(1 - lam1A) * (tildeGs(b*s) - 1/(1+s)) /  (1-b) / (s - lam1*(1-1/(1+s)))}
+  Vectorize(temp)
+}
+
+###################
+# Class-1 LST
+###################
+
+tildeV1 <- function(b, lam1, lam2){
+  rho <- lam1+lam2
+  sigma1 <- lam1*(1-b)
+  tildeV2s <- tildeV2(b, lam1, lam2)
+  tildeVs <- tildeV(b, lam1, lam2)
+  temp <- function(s){b*tildeV2s(s) + (1-rho)*(1-b)/(1-sigma1)*tildeVs(s) + (rho-sigma1)*(1-b)/(1-sigma1)*tildeV2s(s)*tildeVs(s)}
+  Vectorize(temp)
+}
+
+tildeW1 <- function(b, lam1, lam2){
+  rho <- lam1+lam2
+  tildeV1s <- tildeV1(b, lam1, lam2)
+  temp <- function(s){1-rho + rho*tildeV1s(s)}
+  Vectorize(temp)
+}
+
+###################
+# Class-1 CDF
+###################
+
+NP_CDF_class1 <- function(mu, lam1, lam2){
+  lam <- lam1+lam2
+  rho <- lam/mu
+  EW_NP1 <- lam / (mu^2 * (1-lam1))
+  temp <- function(x) 1 - rho*exp(-rho/EW_NP1*x)
+  Vectorize(temp)
+}
+
+# requires mu=1 for simplicity
+AP_CDF_class1 <- function(lam1, lam2, b, N=12){
+  tildeW1s <- tildeW1(b, lam1, lam2)
+  GS_CDF(tildeW1s, N)
+}
+
+DP_CDF_approx_class1 <- function(mu, lam1, lam2, b, d, K=500){
+  lam <- lam1 + lam2
+  rho <- lam / mu
+  EW_DAPQ1 <- Avg_MM1(mu, lam1, lam2, b, d, K)[,'Delayed.APQ.Class.1']
+  temp <- function(t) 1 - rho*exp(-rho / EW_DAPQ1 * t)
+  Vectorize(temp)
+}
+
+FCFS_CDF <- function(mu, lam){
+  rho <- lam/mu
+  temp <- function(x) 1 - rho*exp(-mu*(1-rho)*x)
+  Vectorize(temp)
+}

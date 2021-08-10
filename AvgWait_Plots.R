@@ -1,13 +1,14 @@
 ###############################################################################
-### This creates the average waiting time plots for the associated manuscript.
-### Prepared by Blair Bilodeau on December 15, 2019
+### This creates the average waiting time plots (Section 3.2) for the associated manuscript.
 ###############################################################################
 
-code.path <- '/Users/blairbilodeau/Documents/Research/NSERC_USRA_2018/Avg_Wait_Paper/Code/'
-source(paste0(code.path,"MM1_AvgWait_FINAL.R"))
-source(paste0(code.path,"MD1_AvgWait_FINAL.R"))
+wdir <- '/Users/blairbilodeau/Documents/Research/Projects/Delayed APQ/delayed-apq/'
 
-plot.path <- '/Users/blairbilodeau/Documents/Research/NSERC_USRA_2018/Avg_Wait_Paper/Manuscript/2019_12_15/Plots/'
+code.path <- paste0(wdir, 'code/')
+source(paste0(code.path,"MM1_AvgWait.R"))
+source(paste0(code.path,"MD1_AvgWait.R"))
+
+plot.path <- paste0(wdir, 'manuscript/plots/')
 
 ###############################################################################
 ### M/M/1
@@ -25,7 +26,7 @@ adj_b3 <- Avg_MM1.b(mu=1, lam1=0.5, lam2=0.3, b=b_seq, d=6, K=500)
 adj_b4 <- Avg_MM1.b(mu=1, lam1=0.5, lam2=0.3, b=b_seq, d=8, K=500)
 
 # b Class-1
-png(paste0(plot.path,'MM1_bvals_class1.png'))
+pdf(paste0(plot.path,'MM1_bvals_class1.pdf'))
 
 plot(b_seq, adj_b1['Non.Preemptive.Class.1',], type='l', lty=1,
      main=expression(paste("M/M/1 Class-1, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -50,13 +51,14 @@ lines(b_seq[seq(point_spacing, length(b_seq), point_spacing)], adj_b1['APQ.Class
 legend('topleft', 
        c( 'APQ', 'Delayed APQ, d=2', 'Delayed APQ, d=4', 'Delayed APQ, d=6', 'Delayed APQ, d=8', 'Non-Preemptive'), 
        lty=c(1,2,2,2,2,1), 
-       pch=c(4,20,18,15,17,NA))
+       pch=c(4,20,18,15,17,NA),
+       cex=1.2)
 
 dev.off()
 # use dev.new() to see plot
 
 # b Class-2
-png(paste0(plot.path,'MM1_bvals_class2.png'))
+pdf(paste0(plot.path,'MM1_bvals_class2.pdf'))
 
 plot(b_seq, adj_b1['Non.Preemptive.Class.2',], type='l', lty=1,
      main=expression(paste("M/M/1 Class-2, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -81,7 +83,8 @@ lines(b_seq[seq(point_spacing, length(b_seq), point_spacing)], adj_b1['APQ.Class
 legend('bottomleft', 
        c( 'APQ', 'Delayed APQ, d=2', 'Delayed APQ, d=4', 'Delayed APQ, d=6', 'Delayed APQ, d=8', 'Non-Preemptive'), 
        lty=c(1,2,2,2,2,1), 
-       pch=c(4,20,18,15,17,NA))
+       pch=c(4,20,18,15,17,NA),
+       cex=1.2)
 
 dev.off()
 
@@ -98,7 +101,7 @@ adj_d4 <- Avg_MM1.d(mu=1, lam1=0.5, lam2=0.3, b=0.8, d=d_seq, K=1000)
 adj_d5 <- Avg_MM1.d(mu=1, lam1=0.5, lam2=0.3, b=1, d=d_seq, K=1000)
 
 # d Class-1
-png(paste0(plot.path,'MM1_dvals_class1.png'))
+pdf(paste0(plot.path,'MM1_dvals_class1.pdf'))
 
 plot(d_seq, adj_d1['Non.Preemptive.Class.1',], type='l', lty=1,
      main=expression(paste("M/M/1 Class-1, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -133,12 +136,14 @@ legend('topright',
        c( 'First Come First Served', 'Delayed APQ, b=0.2', 'Delayed APQ, b=0.4', 'Delayed APQ, b=0.6', 'Delayed APQ, b=0.8', 'Delayed APQ, b=1.0', 'Non-Preemptive'), 
        lty=c(1,2,2,2,2,2,1), 
        pch=c(4,20,18,15,17,25,NA),
-       pt.bg=rep('black',7))
+       pt.bg=rep('black',7),
+       cex=1.2,
+       bg='white')
 
 dev.off()
 
 # d Class-2
-png(paste0(plot.path,'MM1_dvals_class2.png'))
+pdf(paste0(plot.path,'MM1_dvals_class2.pdf'))
 
 plot(d_seq, adj_d1['Non.Preemptive.Class.2',], type='l', lty=1,
      main=expression(paste("M/M/1 Class-2, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -173,7 +178,9 @@ legend('bottomright',
        c( 'First Come First Served', 'Delayed APQ, b=0.2', 'Delayed APQ, b=0.4', 'Delayed APQ, b=0.6', 'Delayed APQ, b=0.8', 'Delayed APQ, b=1.0', 'Non-Preemptive'), 
        lty=c(1,2,2,2,2,2,1), 
        pch=c(4,20,18,15,17,25,NA),
-       pt.bg=rep('black',7))
+       pt.bg=rep('black',7),
+       cex=1.2,
+       bg='white')
 
 dev.off()
 
@@ -194,7 +201,7 @@ adj_b3 <- Avg_MD1.b(lam1=0.5, lam2=0.3, b=b_seq, d=6)
 adj_b4 <- Avg_MD1.b(lam1=0.5, lam2=0.3, b=b_seq, d=8)
 
 # b Class-1
-png(paste0(path,'MD1_bvals_class1.png'))
+pdf(paste0(plot.path,'MD1_bvals_class1.pdf'))
 
 plot(b_seq, adj_b1['Non.Preemptive.Class.1',], type='l', lty=1,
      main=expression(paste("M/D/1 Class-1, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -219,13 +226,14 @@ lines(b_seq[seq(point_spacing, length(b_seq), point_spacing)], adj_b0['Delayed.A
 legend('topleft', 
        c( 'APQ', 'Delayed APQ, d=2', 'Delayed APQ, d=4', 'Delayed APQ, d=6', 'Delayed APQ, d=8', 'Non-Preemptive'), 
        lty=c(1,2,2,2,2,1), 
-       pch=c(4,20,18,15,17,NA))
+       pch=c(4,20,18,15,17,NA),
+       cex=1.2)
 
 dev.off()
 # use dev.new() to see plot
 
 # b Class-2
-png(paste0(path,'MD1_bvals_class2.png'))
+pdf(paste0(plot.path,'MD1_bvals_class2.pdf'))
 
 plot(b_seq, adj_b1['Non.Preemptive.Class.2',], type='l', lty=1,
      main=expression(paste("M/D/1 Class-2, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -250,7 +258,8 @@ lines(b_seq[seq(point_spacing, length(b_seq), point_spacing)], adj_b0['Delayed.A
 legend('topleft', 
        c( 'APQ', 'Delayed APQ, d=2', 'Delayed APQ, d=4', 'Delayed APQ, d=6', 'Delayed APQ, d=8', 'Non-Preemptive'), 
        lty=c(1,2,2,2,2,1), 
-       pch=c(4,20,18,15,17,NA))
+       pch=c(4,20,18,15,17,NA),
+       cex=1.2)
 
 dev.off()
 
@@ -267,7 +276,7 @@ adj_d4 <- Avg_MD1.d(lam1=0.5, lam2=0.3, b=0.8, d=d_seq)
 adj_d5 <- Avg_MD1.d(lam1=0.5, lam2=0.3, b=1, d=d_seq)
 
 # d Class-1
-png(paste0(path,'MD1_dvals_class1.png'))
+pdf(paste0(plot.path,'MD1_dvals_class1.pdf'))
 
 plot(d_seq, adj_d1['Non.Preemptive.Class.1',], type='l', lty=1,
      main=expression(paste("M/D/1 Class-1, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -292,12 +301,14 @@ legend('topright',
        c( 'First Come First Served', 'Delayed APQ, b=0.2', 'Delayed APQ, b=0.4', 'Delayed APQ, b=0.6', 'Delayed APQ, b=0.8', 'Delayed APQ, b=1.0', 'Non-Preemptive'), 
        lty = c(1,NA,NA,NA,NA,NA,1),
        pch = c(4,20,18,15,17,25,NA), 
-       pt.bg=rep('black',7))
+       pt.bg=rep('black',7),
+       cex=1.2,
+       bg='white')
 
 dev.off()
 
 # d Class-2
-png(paste0(path,'MD1_dvals_class2.png'))
+pdf(paste0(plot.path,'MD1_dvals_class2.pdf'))
 
 plot(d_seq, adj_d1['Non.Preemptive.Class.2',], type='l', lty=1,
      main=expression(paste("M/D/1 Class-2, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1")), 
@@ -322,6 +333,8 @@ legend('topright',
        c( 'First Come First Served', 'Delayed APQ, b=0.2', 'Delayed APQ, b=0.4', 'Delayed APQ, b=0.6', 'Delayed APQ, b=0.8', 'Delayed APQ, b=1.0', 'Non-Preemptive'), 
        lty = c(1,NA,NA,NA,NA,NA,1),
        pch = c(4,20,18,15,17,25,NA), 
-       pt.bg=rep('black',7))
+       pt.bg=rep('black',7),
+       cex=1.2,
+       bg='white')
 
 dev.off()

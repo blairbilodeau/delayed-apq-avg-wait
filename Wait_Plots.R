@@ -1,12 +1,13 @@
 ###############################################################################
-### This creates the CDF plots for the associated manuscript.
-### Prepared by Blair Bilodeau on December 15, 2019
+### This creates additional CDF plots for the associated manuscript, currently not being used.
 ###############################################################################
 
-code.path <- '/Users/blairbilodeau/Documents/Research/NSERC_USRA_2018/Avg_Wait_Paper/Code/'
-source(paste0(code.path,"MM1_Wait_FINAL.R"))
+wdir <- '/Users/blairbilodeau/Documents/Research/Projects/Delayed APQ/delayed-apq/'
 
-plot.path <- '/Users/blairbilodeau/Documents/Research/NSERC_USRA_2018/Avg_Wait_Paper/Manuscript/2019_12_15/Plots/'
+code.path <- paste0(wdir, 'code/')
+source(paste0(code.path,"MM1_Wait.R"))
+
+plot.path <- paste0(wdir, 'manuscript/plots/')
 
 ###############################################################################
 ### M/M/1
@@ -36,7 +37,7 @@ d6 <- d6.F(x)
 d10 <- d10.F(x)
 
 # d=6, d=10
-png(paste0(path,'MM1_class2.png'))
+pdf(paste0(plot.path,'MM1_class2.pdf'))
 
 plot(x, np, type='l', lty=1,  
      main=expression(paste("M/M/1 Class-2, ", lambda[1], "=0.5, ", lambda[2], "=0.3, ", mu, "=1, ", b, "=0.8")), 
